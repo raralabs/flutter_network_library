@@ -3,6 +3,8 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_network_library/config.dart';
+import 'package:flutter_network_library/domain.dart';
 import 'package:flutter_network_library/network_request_maker.dart';
 import 'package:flutter_network_library/persistor.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -11,9 +13,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 typedef ResponseCallback(Response res);
 
 class RESTExecutor{
-
-  
-
   String method;
   String domain;
   String label;
@@ -29,10 +28,10 @@ class RESTExecutor{
   NetworkRequestMaker requestMaker;
 
 
-  static Map<String,Map<String,Path>> domains;
+  static Map<String,Domain> domains;
   static Map<String,List<String>> domainState;
 
-  static initialize(Map<String,dynamic> config,Map<String,Map<String,Path>> domains)async{
+  static initialize(NetworkConfig config,Map<String,Domain> domains)async{
 
     RESTExecutor.domains = domains;
 
@@ -121,7 +120,7 @@ class RESTExecutor{
 
   }) async{
 
-    if(method == 'GET' && cache.getFreshStatus(getKey()) && !force ){
+    if(method == 'GET' && cache.getFreshStatus(getKey(),domains[domain].cacheForSeconds) && !force ){
 
       if(successCallback!=null)
       successCallback(cache.read(getKey()));
@@ -133,7 +132,7 @@ class RESTExecutor{
 
     NetworkResponse response = await requestMaker.execute(
 
-      path: domains[domain][label],
+      path: domains[domain].path[label],
       query: params,
       identifiers: identifiers,
       data: data,
@@ -141,18 +140,7 @@ class RESTExecutor{
       headers: headers
     );
 
-
-    // print(identifiers);
-    // print(data);
-    
-    // print(response.data);
     if(response.statusCode>=400){
-
-    // print('$domain - $label');
-    
-    // print(identifiers);
-    // print(data);
-    // print(response.data);
     }
 
     try{

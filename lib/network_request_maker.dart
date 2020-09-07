@@ -1,6 +1,7 @@
 import 'dart:convert';
 // import 'dart:io';
 import 'package:flutter_network_library/authenticator.dart';
+import 'package:flutter_network_library/config.dart';
 import 'package:http/http.dart' as http;
 typedef String Path(List<String> identifiers);
 
@@ -63,12 +64,8 @@ bool get isNetworkError => statusCode==600;
 
 class NetworkRequestMaker {
  
-  static String url = 'api.moru.com.np';
-  static int timeout = 30000;
-  static int cacheForSeconds = 0;
+  static String host;
   static String scheme = 'https';
-  static String auth = '/login';
-  static String refreshUrl = '/refresh-token';
 
   static Authenticator authenticator;
   
@@ -84,14 +81,14 @@ class NetworkRequestMaker {
 
  
 
-  static Future<void> initialize(Map<String, dynamic> config) async {
-    NetworkRequestMaker.url = config['host'];
-    NetworkRequestMaker.scheme = config['scheme'];
-    NetworkRequestMaker.timeout = config['timeout'];
+  static Future<void> initialize(NetworkConfig config) async {
+    NetworkRequestMaker.host = config.host;
+    NetworkRequestMaker.scheme = config.scheme==NetworkScheme.http?'http':'https';
     NetworkRequestMaker.authenticator = Authenticator(
-      domain: config['authDomain'],
-      label: config['authLabel'],
-      dependentDomains: ['me','feed','activities','artists','venues']
+      domain: config.authDomain,
+      label: config.loginLabel,
+      refreshLabel: config.registerLabel,
+      authHeaderFormatter: config.authHeaderFormatter
     );
     return;
   }
@@ -110,37 +107,26 @@ class NetworkRequestMaker {
     Map<String,String> headers
   }) async {
 
-
-    String token = authenticator.getAccessToken();
-
      http.Client _client = http.Client();
 
     Uri finalUrl;
     if (scheme == 'https')
-      finalUrl = Uri.https(url, (path != null) ? path(identifiers) : '', query);
+      finalUrl = Uri.https(host, (path != null) ? path(identifiers) : '', query);
     else
-      finalUrl = Uri.http(url, (path != null) ? path(identifiers) : '', query);
+      finalUrl = Uri.http(host, (path != null) ? path(identifiers) : '', query);
 
 
     http.Request request;
 
-    var time = DateTime.now();
-
     try {
-      //  request = await _client.openUrl(this.method, finalUrl).timeout(_client.connectionTimeout);
       request = http.Request(method, finalUrl);
-      // await _client.send(request);
 
     } catch (e) {
-      // if (this.errorCallback != null && this.state.mounted)
-      //   this.errorCallback(json.encode({'error_message': 'Connection failed'}));
       return NetworkResponse.netError();
     }
     request.headers['Content-Type'] = 'application/json';
 
-  if(token!=null)
-   request.headers['Authorization'] = 'Bearer ' +
-            (token??'');
+    request.headers.addAll(authenticator.getAuthorizationHeader());
 
     if (data != null && method != 'GET') request.body = json.encode(data);
 
@@ -151,19 +137,10 @@ class NetworkRequestMaker {
       response = await _client.send(request);
     } catch (e) {
 
-      // if (this.errorCallback != null && this.state.mounted)
-      //   this.errorCallback(json.encode({'error_message': 'Connection failed'}));
-
       return NetworkResponse.netError();
     }
 
-    // print(DateTime.now().difference(time).inMilliseconds);
-
     String responseString = '';
-    // response.transform(utf8.decoder).listen((responseData){
-    //   responseString+=responseData;
-    // },
-
 
     responseString = await response.stream.transform(utf8.decoder).join();
 
@@ -190,48 +167,6 @@ class NetworkRequestMaker {
 
      return NetworkResponse.valError(responseString);
 
-    response.stream.transform(utf8.decoder).listen((responseData) {
-      responseString += responseData;
-    }, onDone: () async {
-      if (response.statusCode == 200) {
-
-        return NetworkResponse.ok(responseString);
-       
-        // await domain.write(method + finalPath, responseString);
-
-        // if (successCallback != null && state.mounted)
-        //   this.successCallback(responseString);
-      } else if (response.statusCode == 401) {
-      
-        // if (await refresh()) {
-        //   print('token renewed');
-        //   execute(data: data, query: query, id: id, force: force);
-        // } else {
-        //   await logout();
-        //   if (state.mounted) {
-        //     Navigator.pushNamedAndRemoveUntil(
-        //       state.context,
-        //       '/',
-        //       (route) => false,
-        //     );
-        //   }
-        // }
-
-      } 
-      // else if (errorCallback != null && state.mounted) {
-      //   String errorString = responseString;
-      //   try {
-      //     var error = jsonDecode(responseString)['error_message'];
-      //   } catch (e) {
-      //     errorString =
-      //         jsonEncode({'error_message': jsonDecode(responseString)});
-      //   } finally {
-      //     this.errorCallback(responseString);
-      //   }
-      // }
-      // if (state?.mounted ?? false) state.setState(() {});
-      
-    });
   }
 
 }

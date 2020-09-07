@@ -4,11 +4,15 @@
 import 'package:flutter_network_library/data_provider.dart';
 import 'package:flutter_network_library/flutter_network_library.dart';
 
+typedef Map<String,String> HeaderFormatter(String accessToken);
+
 class Authenticator extends RESTExecutor{
 
   String refreshLabel;
 
   List<String> dependentDomains;
+
+  HeaderFormatter authHeaderFormatter;
 
   Authenticator({
     ResponseCallback successCallback,
@@ -18,7 +22,9 @@ class Authenticator extends RESTExecutor{
     
     this.refreshLabel = 'refresh',
     String domain = 'auth',
-    String label = 'login'
+    String label = 'login',
+
+    this.authHeaderFormatter
 
   })
   :
@@ -64,6 +70,20 @@ class Authenticator extends RESTExecutor{
     }
     
     await super.cache.delete(super.getKey());
+  }
+
+  Map<String,String> getAuthorizationHeader(){
+
+    if(!isLoggedIn())
+    return {};
+
+    if(authHeaderFormatter!=null)
+    return authHeaderFormatter(getAccessToken());
+
+    return {
+      'Authorization': 'Bearer ${getAccessToken()}'
+    };
+
   }
 
   String getAccessToken(){

@@ -98,14 +98,14 @@ class Persistor{
     return box;
   }
 
-  bool getFreshStatus(String key){
+  bool getFreshStatus(String key,int cacheSeconds){
 
     Response result = read(key);
 
-    if(result==null)
+    if(result==null || cacheSeconds==null)
     return false;
 
-    return result.success && (result.timeStamp??DateTime.now()).isAfter(DateTime.now().subtract(Duration(minutes: 60)));
+    return result.success && (result.timeStamp??DateTime.now()).isAfter(DateTime.now().subtract(Duration(seconds: cacheSeconds)));
   }
 
   init(String key){
