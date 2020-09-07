@@ -1,4 +1,5 @@
 import 'package:flutter_network_library/authenticator.dart';
+import 'package:flutter_network_library/flutter_network_library.dart';
 
 enum NetworkScheme{
   http,
@@ -15,5 +16,14 @@ class NetworkConfig{
   String registerLabel;
 
   HeaderFormatter authHeaderFormatter;
+
+  NetworkConfig({
+    this.authDomain,
+    this.authHeaderFormatter,
+    this.host,
+    this.loginLabel,
+    this.registerLabel,
+    this.scheme
+  });
 
 }

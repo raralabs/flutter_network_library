@@ -84,6 +84,7 @@ class NetworkRequestMaker {
   static Future<void> initialize(NetworkConfig config) async {
     NetworkRequestMaker.host = config.host;
     NetworkRequestMaker.scheme = config.scheme==NetworkScheme.http?'http':'https';
+    
     NetworkRequestMaker.authenticator = Authenticator(
       domain: config.authDomain,
       label: config.loginLabel,

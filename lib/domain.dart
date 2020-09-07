@@ -6,6 +6,11 @@ class Domain{
   int cacheForSeconds;
 
   Map<String,Path> path;
+
+  Domain({
+    this.path,
+    this.cacheForSeconds
+  });
   
 
 }
