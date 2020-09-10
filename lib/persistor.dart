@@ -34,6 +34,7 @@ class Response {
   Response({
     this.success = false,
     this.fetching = false,
+    this.data = const {}
 
   });
 
@@ -62,6 +63,14 @@ class Response {
   getValidationErrorFor(String key){
     try{
       return error['validation_errors'][key][0];
+    }catch(e){
+      return null;
+    }
+  }
+
+  value(String key){
+    try{
+      return data[key];
     }catch(e){
       return null;
     }
@@ -105,7 +114,7 @@ class Persistor{
     if(result==null || cacheSeconds==null)
     return false;
 
-    return result.success && (result.timeStamp??DateTime.now()).isAfter(DateTime.now().subtract(Duration(seconds: cacheSeconds)));
+    return (result.success??false) && (result.timeStamp??DateTime.now()).isAfter(DateTime.now().subtract(Duration(seconds: cacheSeconds)));
   }
 
   init(String key){

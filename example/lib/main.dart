@@ -1,6 +1,11 @@
+import 'package:example/config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_network_library/data_provider.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await RESTExecutor.initialize(config, domains);
   runApp(MyApp());
 }
 
@@ -10,15 +15,25 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  RESTExecutor _changeTheme = RESTExecutor(
+    domain: 'appState',
+    label: 'theme'
+  );
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return ValueListenableBuilder(
+      valueListenable: _changeTheme.getListenable(),
+          builder:(_,__,___)=> MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          brightness: (_changeTheme.response.value('dark')??true)?Brightness.dark:Brightness.light,
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: MyHomePage(title: 'Network Library Example'),
       ),
-      home: MyHomePage(title: 'Network Library Example'),
     );
   }
 }
@@ -33,13 +48,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  RESTExecutor _changeTheme = RESTExecutor(
+    domain: 'appState',
+    label: 'theme'
+  );
+
+  RESTExecutor _getData = RESTExecutor(
+    domain: 'api',
+    label: 'list'
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -51,14 +69,57 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: Column(
-       
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+         
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[ 
             Text(
-              '',
+              'For Local State Management',
+              style: TextStyle(
+                fontSize:18,
+                height: 2
+              ),
             ),
+            SizedBox(height: 20,),
+            Text(
+                _changeTheme.response.data.toString(),
+              ),
+            SizedBox(height: 20,),
             RaisedButton(
-              onPressed: (){},
+              onPressed: (){
+                _changeTheme.execute(
+                  data: {
+                    'dark':!(_changeTheme.response.value('dark')??true)
+                  }
+                );
+              },
+                          child: Text(
+                'Change Theme',
+              ),
+            ),
+            Divider(),
+            Text(
+              'For Network Request Caching',
+              style: TextStyle(
+                fontSize:18,
+                height: 2
+              ),
+            ),
+            SizedBox(height: 20,),
+             ValueListenableBuilder(
+               valueListenable: _getData.getListenable(),
+                            builder:(_,__,___)=> Text(
+                              _getData.response.fetching?
+                              'Loading...':
+                  _getData.response.data.toString(),
+                ),
+             ),
+            SizedBox(height: 20,),
+            RaisedButton(
+              onPressed: (){
+                _getData.execute(
+                  
+                );
+              },
                           child: Text(
                 'Fetch Data',
               ),

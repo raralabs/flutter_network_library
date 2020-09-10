@@ -11,6 +11,8 @@ class NetworkConfig{
   String host;
   NetworkScheme scheme;
 
+  int cacheForSeconds;
+
   String authDomain;
   String loginLabel;
   String registerLabel;
@@ -23,7 +25,8 @@ class NetworkConfig{
     this.host,
     this.loginLabel,
     this.registerLabel,
-    this.scheme
+    this.scheme,
+    this.cacheForSeconds = 30
   });
 
 }

@@ -67,6 +67,7 @@ class NetworkRequestMaker {
   static String host;
   static String scheme = 'https';
 
+
   static Authenticator authenticator;
   
   String finalPath = '';
@@ -85,6 +86,7 @@ class NetworkRequestMaker {
     NetworkRequestMaker.host = config.host;
     NetworkRequestMaker.scheme = config.scheme==NetworkScheme.http?'http':'https';
     
+    if(config.authDomain!=null)
     NetworkRequestMaker.authenticator = Authenticator(
       domain: config.authDomain,
       label: config.loginLabel,
@@ -127,7 +129,7 @@ class NetworkRequestMaker {
     }
     request.headers['Content-Type'] = 'application/json';
 
-    request.headers.addAll(authenticator.getAuthorizationHeader());
+    request.headers.addAll(authenticator?.getAuthorizationHeader()??{});
 
     if (data != null && method != 'GET') request.body = json.encode(data);
 
@@ -159,7 +161,7 @@ class NetworkRequestMaker {
       
       if(!(refreshing??false)){
         refreshing=true;
-      authenticator.refresh();
+      authenticator?.refresh();
 
       }
 

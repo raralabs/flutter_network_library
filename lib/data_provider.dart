@@ -12,6 +12,14 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 typedef ResponseCallback(Response res);
 
+class ResponseListenableWidget extends ValueListenableBuilder{
+
+  ResponseListenableWidget({
+    Listenable valueListenable,
+    Widget child
+  }): super(valueListenable:valueListenable,builder:(_,__,___)=>child);
+}
+
 class RESTExecutor{
   String method;
   String domain;
@@ -19,6 +27,7 @@ class RESTExecutor{
   Map<String,String> params;
   List<String> identifiers;
   Map<String,String> headers;
+
 
   ResponseCallback successCallback;
   ResponseCallback errorCallback;
@@ -29,18 +38,23 @@ class RESTExecutor{
 
 
   static Map<String,Domain> domains;
-  static Map<String,List<String>> domainState;
+  static Map<String,Set<String>> domainState;
+
+  static int cacheForSeconds = 60;
 
   static initialize(NetworkConfig config,Map<String,Domain> domains)async{
 
     RESTExecutor.domains = domains;
+
+    if(config.cacheForSeconds!=null)
+    RESTExecutor.cacheForSeconds = config.cacheForSeconds;
 
     await Persistor.initialize();
     await NetworkRequestMaker.initialize(config);
 
     domainState = {};
    domains.forEach((key, value) {
-     domainState[key] = [];
+     domainState[key] = {};
    });
     
   }
@@ -80,30 +94,46 @@ class RESTExecutor{
     this.headers = headers;
   }
 
+  Widget widget({Widget child})=>ResponseListenableWidget(
+    valueListenable: getListenable(),
+    child: child,
+  );
+
   getListenable(){
     return cache.getBox().listenable();
   }
 
 
   static refetchDomain(String domain){
-    domainState[domain] = [];
+    domainState[domain] = {};
 
     RESTExecutor(domain: domain,label: 'label').read();
   }
 
+  Response get response => read();
+
   Response read(){
 
     if(
+
+      domains[domain].type==DomainType.network
+      &&
       method=='GET'
       &&
+      !cache.read(getKey()).fetching
+      &&
+      (
       (!domainState[domain].contains(getKey()))
+      
+      ||
+
+      (!cache.getFreshStatus(getKey(), domains[domain].cacheForSeconds??RESTExecutor.cacheForSeconds))
+      )
       ){
 
         domainState[domain].add(getKey());
-        execute(force: true);
+        execute();
     }
-
-
     return cache.read(getKey());
   }
 
@@ -114,20 +144,36 @@ class RESTExecutor{
   }
 
   execute({
-    Map<String,dynamic> data,
-
-    bool force = false
+    Map<String,dynamic> data
 
   }) async{
+    switch(domains[domain].type){
 
-    if(method == 'GET' && cache.getFreshStatus(getKey(),domains[domain].cacheForSeconds) && !force ){
+      case DomainType.network:
+      await networkExecute(data);
+      break;
 
-      if(successCallback!=null)
-      successCallback(cache.read(getKey()));
+      default:
+      await basicExecute(data);
+      break;
 
-      return;
     }
+  }
 
+  basicExecute(Map<String,dynamic> data)async{
+
+    if(data == null)
+    await cache.end(getKey());
+    else
+    await cache.complete(getKey(), data: data, success: true);
+
+    if(successCallback!=null && response.success){
+      successCallback(cache.read(getKey()));
+    }
+  }
+
+  networkExecute(Map<String,dynamic> data)async{
+    
     cache.start(getKey());
 
     NetworkResponse response = await requestMaker.execute(
@@ -170,7 +216,7 @@ class RESTExecutor{
 
 
     if(method?.toUpperCase()!='GET' && response.success){
-      domainState[domain] = [];
+      domainState[domain] = {};
     }
 
     if(
@@ -185,6 +231,7 @@ class RESTExecutor{
 
 
     await cache.end(getKey());
+    
   }
 
 
