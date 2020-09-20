@@ -9,6 +9,7 @@ enum DomainType{
 class Domain{
 
   int cacheForSeconds;
+  int retryAfterSeconds;
   DomainType type;
 
   Map<String,Path> path;

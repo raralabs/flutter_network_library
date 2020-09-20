@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_network_library/config.dart';
 import 'package:flutter_network_library/domain.dart';
+import 'package:flutter_network_library/flutter_network_library.dart';
 import 'package:flutter_network_library/network_request_maker.dart';
 import 'package:flutter_network_library/persistor.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -28,6 +29,9 @@ class RESTExecutor{
   List<String> identifiers;
   Map<String,String> headers;
 
+  int cacheForSeconds;
+  int retryAfterSeconds;
+
 
   ResponseCallback successCallback;
   ResponseCallback errorCallback;
@@ -40,14 +44,15 @@ class RESTExecutor{
   static Map<String,Domain> domains;
   static Map<String,Set<String>> domainState;
 
-  static int cacheForSeconds = 60;
+  static int cacheForSecondsAll = 60;
+  static int retryAfterSecondsAll = 15;
 
   static initialize(NetworkConfig config,Map<String,Domain> domains)async{
 
     RESTExecutor.domains = domains;
 
     if(config.cacheForSeconds!=null)
-    RESTExecutor.cacheForSeconds = config.cacheForSeconds;
+    RESTExecutor.cacheForSecondsAll = config.cacheForSeconds;
 
     await Persistor.initialize();
     await NetworkRequestMaker.initialize(config);
@@ -127,7 +132,11 @@ class RESTExecutor{
       
       ||
 
-      (!cache.getFreshStatus(getKey(), domains[domain].cacheForSeconds??RESTExecutor.cacheForSeconds))
+      (!cache.getFreshStatus(
+        getKey(), 
+        cacheForSeconds??domains[domain].cacheForSeconds??RESTExecutor.cacheForSecondsAll,
+        retryAfterSeconds??domains[domain].retryAfterSeconds??RESTExecutor.retryAfterSecondsAll
+        ))
       )
       ){
 
@@ -140,7 +149,7 @@ class RESTExecutor{
 
   String getKey(){
     
-    return '$method$domain$label$identifiers$params$headers';
+    return '$method$label$identifiers$params$headers';
   }
 
   execute({
