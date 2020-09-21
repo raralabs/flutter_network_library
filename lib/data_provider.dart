@@ -210,7 +210,7 @@ class RESTExecutor{
     }
 
     try{
-      Map<String,dynamic> decoded = jsonDecode(response.data);
+      dynamic decoded = jsonDecode(response.data);
 
       
     await cache.complete(getKey(),
