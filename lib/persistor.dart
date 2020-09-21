@@ -150,7 +150,7 @@ class Persistor{
 
   Future<void> complete(String key, {
     bool success,
-    Map<String,dynamic> data,
+    dynamic data,
     String rawData
   })
   async
@@ -183,7 +183,7 @@ class Persistor{
   Response read(String key) {
     Response result = box.get(key,defaultValue: Response());
 
-    if( result.data!=null && result.data.runtimeType!=List)
+    if( result.data!=null && !(result.data is List))
     result.data = (result.data as Map).cast<String,dynamic>();
 
     return result;
