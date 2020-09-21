@@ -34,7 +34,8 @@ class Response {
   Response({
     this.success = false,
     this.fetching = false,
-    this.data = const {}
+    this.data = const {},
+    this.error = const {}
 
   });
 

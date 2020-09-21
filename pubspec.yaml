@@ -1,6 +1,6 @@
 name: flutter_network_library
 description: A new Flutter package project.
-version: 0.0.2
+version: 0.0.3
 author:
 homepage:
 
@@ -11,11 +11,11 @@ dependencies:
   flutter:
     sdk: flutter
 
-  http:
+  http: 0.12.2
   
-  hive:
-  hive_flutter:
-  hive_generator:
+  hive: 1.4.4
+  hive_flutter: 0.3.1
+  hive_generator: 0.7.1
 
 dev_dependencies:
   flutter_test:

@@ -8,17 +8,26 @@ import 'package:flutter_network_library/domain.dart';
 import 'package:flutter_network_library/flutter_network_library.dart';
 import 'package:flutter_network_library/network_request_maker.dart';
 import 'package:flutter_network_library/persistor.dart';
+import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 
 typedef ResponseCallback(Response res);
+typedef Widget RESTBuilder(Response response);
 
-class ResponseListenableWidget extends ValueListenableBuilder{
+class RESTListenableBuilder extends ValueListenableBuilder{
+/// Creates a listenable builder that listens to the changes do provided RESTExecutor's domain
 
-  ResponseListenableWidget({
-    Listenable valueListenable,
-    Widget child
-  }): super(valueListenable:valueListenable,builder:(_,__,___)=>child);
+  final RESTExecutor executor;
+
+  // The RESTExecutor object for this builder
+
+  RESTListenableBuilder({
+    this.executor,
+    RESTBuilder builder,
+    bool exact = false
+    
+  }): super(valueListenable:executor.getListenable(exact),builder:(_,__,___)=>builder(executor.response));
 }
 
 class RESTExecutor{
@@ -77,10 +86,13 @@ class RESTExecutor{
 
     }
   ){
+
+    assert(domains.keys.contains(domain));
+
     requestMaker = NetworkRequestMaker();
     cache = Persistor(domain);
 
-    cache.init(getKey());
+    // cache.init(getKey());
   }
 
   void delete(){
@@ -99,13 +111,10 @@ class RESTExecutor{
     this.headers = headers;
   }
 
-  Widget widget({Widget child})=>ResponseListenableWidget(
-    valueListenable: getListenable(),
-    child: child,
-  );
+  ValueListenable<Box<dynamic>> getListenable([bool exact=false]){
+    return cache.getBox().listenable(keys: exact?[getKey()]:null);
 
-  getListenable(){
-    return cache.getBox().listenable();
+    
   }
 
 
@@ -143,6 +152,7 @@ class RESTExecutor{
         domainState[domain].add(getKey());
         execute();
     }
+
     return cache.read(getKey());
   }
 

@@ -16,24 +16,27 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  RESTExecutor _changeTheme = RESTExecutor(
-    domain: 'appState',
-    label: 'theme'
-  );
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: _changeTheme.getListenable(),
-          builder:(_,__,___)=> MaterialApp(
+    return RESTListenableBuilder(
+          executor: RESTExecutor(
+              domain: 'appState',
+              label: 'theme'
+            ),
+            exact: true,
+          builder:(response){
+            print("inside listenable");
+            return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
-          brightness: (_changeTheme.response.value('dark')??true)?Brightness.dark:Brightness.light,
+          brightness: (response.value('dark')??true)?Brightness.dark:Brightness.light,
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: MyHomePage(title: 'Network Library Example'),
-      ),
+      );
+          }
     );
   }
 }
@@ -61,6 +64,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    print("building");
 
     return Scaffold(
       appBar: AppBar(
@@ -124,6 +129,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 'Fetch Data',
               ),
             ),
+            RESTListenableBuilder(
+              executor: RESTExecutor(domain: 'appState',label: 'theme'),
+              builder: (response)=>Text(response.data.toString()),
+            )
           ],
         ),
       ),
