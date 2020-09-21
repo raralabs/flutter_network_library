@@ -20,7 +20,7 @@ class Response {
   DateTime timeStamp;
 
   @HiveField(2)
-  Map<String,dynamic> data;
+  dynamic data;
 
   @HiveField(3)
   Map<String,dynamic> error;
