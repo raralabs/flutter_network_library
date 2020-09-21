@@ -91,7 +91,8 @@ class NetworkRequestMaker {
       domain: config.authDomain,
       label: config.loginLabel,
       refreshLabel: config.registerLabel,
-      authHeaderFormatter: config.authHeaderFormatter
+      authHeaderFormatter: config.authHeaderFormatter,
+      authResponseFormatter: config.authResponseFormatter
     );
     return;
   }

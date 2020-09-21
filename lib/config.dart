@@ -18,10 +18,12 @@ class NetworkConfig{
   String registerLabel;
 
   HeaderFormatter authHeaderFormatter;
+  AuthResponseFormatter authResponseFormatter;
 
   NetworkConfig({
     this.authDomain,
     this.authHeaderFormatter,
+    this.authResponseFormatter,
     this.host,
     this.loginLabel,
     this.registerLabel,
