@@ -21,7 +21,9 @@ class ResponseAdapter extends TypeAdapter<Response> {
     )
       ..rawData = fields[0] as String
       ..timeStamp = fields[1] as DateTime
-      ..data = (fields[2] as Map)?.cast<String, dynamic>()
+      // ..data = (fields[2] as Map)?.cast<String, dynamic>()
+      
+      ..data = fields[2]
       ..error = (fields[3] as Map)?.cast<String, dynamic>();
   }
 
