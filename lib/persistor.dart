@@ -182,6 +182,10 @@ class Persistor{
 
   Response read(String key) {
     Response result = box.get(key,defaultValue: Response());
+
+    if( result.data!=null && result.data.runtimeType!=List)
+    result.data = (result.data as Map).cast<String,dynamic>();
+
     return result;
   }
 
