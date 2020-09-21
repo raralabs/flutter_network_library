@@ -1,10 +1,20 @@
-
-
-
 import 'package:flutter_network_library/data_provider.dart';
 import 'package:flutter_network_library/flutter_network_library.dart';
 
 typedef Map<String,String> HeaderFormatter(String accessToken);
+typedef AuthTokenObject AuthResponseFormatter(Map<String,dynamic> data);
+
+class AuthTokenObject{
+
+  String accessToken;
+  String refreshToken;
+
+  AuthTokenObject({
+    this.accessToken,
+    this.refreshToken
+  });
+
+}
 
 class Authenticator extends RESTExecutor{
 
@@ -13,6 +23,7 @@ class Authenticator extends RESTExecutor{
   List<String> dependentDomains;
 
   HeaderFormatter authHeaderFormatter;
+  AuthResponseFormatter authResponseFormatter;
 
   Authenticator({
     ResponseCallback successCallback,
@@ -24,7 +35,8 @@ class Authenticator extends RESTExecutor{
     String domain = 'auth',
     String label = 'login',
 
-    this.authHeaderFormatter
+    this.authHeaderFormatter,
+    this.authResponseFormatter
 
   })
   :
@@ -96,6 +108,9 @@ class Authenticator extends RESTExecutor{
     if(result.success == false)
     return null;
 
+    if(authResponseFormatter!=null)
+    return authResponseFormatter(result.data).accessToken;
+
     return result.parseDetail()['access_token'];
       
   }
@@ -109,6 +124,10 @@ class Authenticator extends RESTExecutor{
 
     if(result.success == false)
     return null;
+
+    
+    if(authResponseFormatter!=null)
+    return authResponseFormatter(result.data).refreshToken;
 
     return result.parseDetail()['refresh_token'];
       
