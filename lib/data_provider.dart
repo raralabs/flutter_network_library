@@ -164,13 +164,14 @@ class RESTExecutor{
   }
 
   execute({
-    Map<String,dynamic> data
+    Map<String,dynamic> data,
+    bool mutation
 
   }) async{
     switch(domains[domain].type){
 
       case DomainType.network:
-      await networkExecute(data);
+      await networkExecute(data,mutation);
       break;
 
       default:
@@ -192,7 +193,7 @@ class RESTExecutor{
     }
   }
 
-  networkExecute(Map<String,dynamic> data)async{
+  networkExecute(Map<String,dynamic> data,bool mutation)async{
     
     cache.start(getKey());
 
@@ -235,7 +236,12 @@ class RESTExecutor{
       errorCallback(cache.read(getKey()));
 
 
-    if(method?.toUpperCase()!='GET' && response.success){
+    if(
+      mutation??
+      (
+      method?.toUpperCase()!='GET' && response.success
+      )
+      ){
       domainState[domain] = {};
     }
 
