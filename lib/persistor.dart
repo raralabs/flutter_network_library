@@ -91,7 +91,17 @@ class Persistor{
      Hive.registerAdapter(ResponseAdapter());
 
      for( var key in RESTExecutor.domains.keys){
-      await Hive.openBox(key);
+      var box = await Hive.openBox(key);
+
+       for (var key in box.keys){
+        Response result = box.get(key,defaultValue: Response());
+
+        result.fetching = false;
+        result.error = {};
+
+        await box.put(key, result);
+        
+      }
     }
 
     initialized = true;
