@@ -83,7 +83,9 @@ class RESTExecutor{
       this.identifiers = const [],
       this.headers,
       this.successCallback,
-      this.errorCallback
+      this.errorCallback,
+      this.cacheForSeconds,
+      this.retryAfterSeconds
 
     }
   ){
