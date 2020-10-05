@@ -17,11 +17,11 @@ class NetworkResponse{
     this.success = false
   });
 
-  static NetworkResponse ok(String data){
+  static NetworkResponse ok(String data,[int statusCode = 200]){
     return NetworkResponse(
       data:data,
       success: true,
-      statusCode: 200
+      statusCode: statusCode
     );
   }
 
@@ -149,9 +149,9 @@ class NetworkRequestMaker {
     responseString = await response.stream.transform(utf8.decoder).join();
 
 
-     if (response.statusCode == 200) {
+     if (response.statusCode == 200 || response.statusCode == 201) {
 
-        return NetworkResponse.ok(responseString);
+        return NetworkResponse.ok(responseString,response.statusCode);
      }
 
      else if(response.statusCode == 404){

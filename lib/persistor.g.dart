@@ -22,7 +22,7 @@ class ResponseAdapter extends TypeAdapter<Response> {
       ..rawData = fields[0] as String
       ..timeStamp = fields[1] as DateTime
       // ..data = (fields[2] as Map)?.cast<String, dynamic>()
-      
+      ..statusCode = fields[6] as int
       ..data = fields[2]
       ..error = (fields[3] as Map)?.cast<String, dynamic>();
   }
@@ -30,7 +30,7 @@ class ResponseAdapter extends TypeAdapter<Response> {
   @override
   void write(BinaryWriter writer, Response obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.rawData)
       ..writeByte(1)
@@ -42,7 +42,10 @@ class ResponseAdapter extends TypeAdapter<Response> {
       ..writeByte(4)
       ..write(obj.fetching)
       ..writeByte(5)
-      ..write(obj.success);
+      ..write(obj.success)
+      ..writeByte(6)
+      ..write(obj.statusCode)
+      ;
   }
 
   @override

@@ -219,13 +219,15 @@ class RESTExecutor{
     await cache.complete(getKey(),
     success: response.success,
     rawData: response.data,
-    data: decoded
+    data: decoded,
+    statusCode: response.statusCode,
     );
     }catch(e){
      await cache.complete(getKey(),
           success: response.success,
           rawData: response.data,
-          data: {}
+          data: {},
+          statusCode: response.statusCode
           );
     }
 

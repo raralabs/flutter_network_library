@@ -29,11 +29,15 @@ class Response {
   @HiveField(5)
   bool success;
 
+  @HiveField(6)
+  int statusCode;
+
   Response({
     this.success = false,
     this.fetching = false,
     this.data = const {},
-    this.error = const {}
+    this.error = const {},
+    this.statusCode = 200
 
   });
 
@@ -159,7 +163,8 @@ class Persistor{
   Future<void> complete(String key, {
     bool success,
     dynamic data,
-    String rawData
+    String rawData,
+    int statusCode
   })
   async
   {
@@ -176,7 +181,7 @@ class Persistor{
     else
     result.error = data;
 
-
+  result.statusCode = statusCode;
   result.timeStamp = DateTime.now();
   result.rawData = rawData;
 
