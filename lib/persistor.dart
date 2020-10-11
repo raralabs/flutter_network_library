@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_network_library/data_provider.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 part 'persistor.g.dart';
 
@@ -87,8 +88,8 @@ class Persistor{
 
   static Future<void> initialize({String databaseName = 'store3.db'}) async {
     
-    // var dir = await getApplicationDocumentsDirectory();
-    // Hive.init(dir.path);
+    var dir = await getApplicationDocumentsDirectory();
+    Hive.init(dir.path);
     
     if(!kIsWeb)
     await Hive.initFlutter();
