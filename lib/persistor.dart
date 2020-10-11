@@ -89,6 +89,7 @@ class Persistor{
     
     // var dir = await getApplicationDocumentsDirectory();
     // Hive.init(dir.path);
+    
     if(!kIsWeb)
     await Hive.initFlutter();
 
