@@ -88,7 +88,7 @@ class Persistor{
 
   static Future<void> initialize({String databaseName = 'store3.db'}) async {
     
-    var dir = await getApplicationDocumentsDirectory();
+    var dir = await getTemporaryDirectory();
     Hive.init(dir.path);
     
     if(!kIsWeb)
