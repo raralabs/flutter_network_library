@@ -181,7 +181,7 @@ class Persistor{
     result.error = {};
     }
     else
-    result.error = data;
+    result.error = (data as Map).cast<String,dynamic>();
 
   result.statusCode = statusCode;
   result.timeStamp = DateTime.now();
