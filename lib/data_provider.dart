@@ -162,7 +162,7 @@ class RESTExecutor{
 
   String getKey(){
     
-    return '$method$label$identifiers$params$headers';
+    return '$method$label$identifiers${params.toString()?.hashCode}${headers.toString()?.hashCode}';
   }
 
   execute({
