@@ -49,9 +49,9 @@ static NetworkResponse netError(){
     );
   }
 
-  static NetworkResponse notFoundError(){
+  static NetworkResponse notFoundError([String data]){
     return NetworkResponse(
-      data:json.encode({'error_message': 'not found'}),
+      data:data??json.encode({'error_message': 'not found'}),
       success: false,
       statusCode: 404
     );
@@ -155,7 +155,7 @@ class NetworkRequestMaker {
      }
 
      else if(response.statusCode == 404){
-       return NetworkResponse.notFoundError();
+       return NetworkResponse.notFoundError(responseString);
      }
 
      else if(response.statusCode == 401 || response.statusCode == 422 || response.statusCode == 403){
