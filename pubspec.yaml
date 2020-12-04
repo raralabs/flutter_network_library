@@ -18,7 +18,6 @@ dependencies:
   hive_generator: 0.7.1
 
   path_provider:
-  path_provider_windows:
 
 dev_dependencies:
   flutter_test:
