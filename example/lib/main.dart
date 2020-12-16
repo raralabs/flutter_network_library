@@ -41,36 +41,32 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
   RESTExecutor _changeTheme = RESTExecutor(
     domain: 'appState',
     label: 'theme'
   );
 
-  RESTExecutor _getData = RESTExecutor(
-    domain: 'api',
-    label: 'list'
-  );
+
+
+class MyHomePage extends StatelessWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
 
   @override
   Widget build(BuildContext context) {
 
-    print("building");
+    print('rebuilt');
+      RESTExecutor _getData = RESTExecutor(
+    domain: 'api',
+    label: 'list'
+  );
+    var data = _getData.watch(context);
 
     return Scaffold(
       appBar: AppBar(
 
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
@@ -110,14 +106,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             SizedBox(height: 20,),
-             ValueListenableBuilder(
-               valueListenable: _getData.getListenable(),
-                            builder:(_,__,___)=> Text(
-                              _getData.response.fetching?
+             Text(
+                              data.fetching?
                               'Loading...':
-                  _getData.response.data.toString(),
+                  data.data.toString(),
                 ),
-             ),
+             
             SizedBox(height: 20,),
             RaisedButton(
               onPressed: (){
@@ -129,10 +123,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 'Fetch Data',
               ),
             ),
-            RESTListenableBuilder(
+            /* RESTListenableBuilder(
               executor: RESTExecutor(domain: 'appState',label: 'theme'),
               builder: (response)=>Text(response.data.toString()),
-            )
+            ) */
           ],
         ),
       ),

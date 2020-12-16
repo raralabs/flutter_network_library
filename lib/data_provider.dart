@@ -31,6 +31,14 @@ class RESTListenableBuilder extends ValueListenableBuilder{
   }): super(valueListenable:executor.getListenable(exact),builder:(_,__,___)=>builder(executor.response));
 }
 
+class RESTWidget extends RESTListenableBuilder{
+  RESTWidget({
+    @required RESTExecutor executor,
+    @required RESTBuilder builder,
+    bool exact =false
+  }): super(executor: executor,builder:builder,exact:exact);
+}
+
 class RESTExecutor{
   String method;
   String domain;
@@ -86,7 +94,6 @@ class RESTExecutor{
       this.errorCallback,
       this.cacheForSeconds,
       this.retryAfterSeconds
-
     }
   ){
 
@@ -97,6 +104,8 @@ class RESTExecutor{
 
     // cache.init(getKey());
   }
+
+  
 
   void delete(){
     method = 'DELETE';
@@ -116,8 +125,16 @@ class RESTExecutor{
 
   ValueListenable<Box<dynamic>> getListenable([bool exact=false]){
     return cache.getBox().listenable(keys: exact?[getKey()]:null);
+  }
 
+  Response watch(BuildContext context,{bool exact = false}){
     
+    getListenable(exact).addListener(() {
+
+      (context as Element).markNeedsBuild();
+
+    });
+    return response;
   }
 
 
