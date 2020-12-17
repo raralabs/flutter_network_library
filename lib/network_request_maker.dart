@@ -67,6 +67,8 @@ class NetworkRequestMaker {
   static String host;
   static String scheme = 'https';
 
+  static int timeoutSeconds;
+
 
   static Authenticator authenticator;
   
@@ -85,6 +87,10 @@ class NetworkRequestMaker {
   static Future<void> initialize(NetworkConfig config) async {
     NetworkRequestMaker.host = config.host;
     NetworkRequestMaker.scheme = config.scheme==NetworkScheme.http?'http':'https';
+
+    assert(config.timeoutSeconds != null);
+    
+    NetworkRequestMaker.timeoutSeconds = config.timeoutSeconds;
     
     if(config.authDomain!=null)
     NetworkRequestMaker.authenticator = Authenticator(
@@ -138,7 +144,7 @@ class NetworkRequestMaker {
 
     http.StreamedResponse response;
     try {
-      response = await _client.send(request);
+      response = await _client.send(request).timeout(Duration(seconds: NetworkRequestMaker.timeoutSeconds));
     } catch (e) {
 
       return NetworkResponse.netError();

@@ -12,7 +12,7 @@ class NetworkConfig{
   NetworkScheme scheme;
 
   int cacheForSeconds;
-
+  int timeoutSeconds;
   String authDomain;
   String loginLabel;
   String registerLabel;
@@ -28,6 +28,7 @@ class NetworkConfig{
     this.loginLabel,
     this.registerLabel,
     this.scheme,
+    this.timeoutSeconds = 10,
     this.cacheForSeconds = 30
   });
 
