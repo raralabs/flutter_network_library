@@ -97,6 +97,7 @@ class NetworkRequestMaker {
       domain: config.authDomain,
       label: config.loginLabel,
       refreshLabel: config.registerLabel,
+      clearCacheOnLogout: config.clearCacheOnLogout,
       authHeaderFormatter: config.authHeaderFormatter,
       authResponseFormatter: config.authResponseFormatter
     );

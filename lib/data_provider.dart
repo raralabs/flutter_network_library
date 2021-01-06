@@ -105,7 +105,7 @@ class RESTExecutor{
     // cache.init(getKey());
   }
 
-  
+  static Future<void> clearCache()=>Persistor.clear();
 
   void delete(){
     method = 'DELETE';
@@ -144,9 +144,12 @@ class RESTExecutor{
     RESTExecutor(domain: domain,label: 'label').read();
   }
 
-  Response get response => read();
+  Response get response => read(true);
 
-  Response read(){
+  Response read([bool active = true]){
+
+    if(!active)
+     return cache.read(getKey());
 
     if(
 

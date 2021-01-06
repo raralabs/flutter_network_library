@@ -16,7 +16,7 @@ class NetworkConfig{
   String authDomain;
   String loginLabel;
   String registerLabel;
-
+  bool clearCacheOnLogout;
   HeaderFormatter authHeaderFormatter;
   AuthResponseFormatter authResponseFormatter;
 
@@ -28,6 +28,7 @@ class NetworkConfig{
     this.loginLabel,
     this.registerLabel,
     this.scheme,
+    this.clearCacheOnLogout = false,
     this.timeoutSeconds = 10,
     this.cacheForSeconds = 30
   });

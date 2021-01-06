@@ -113,6 +113,18 @@ class Persistor{
     initialized = true;
   }
 
+
+  static Future<void> clear()async{
+
+    for( var key in RESTExecutor.domains.keys){
+      var box = await Hive.openBox(key);
+
+      await box.clear();
+      
+    }
+
+  }
+
   Persistor(String domain){
     box = Hive.box(domain);
   

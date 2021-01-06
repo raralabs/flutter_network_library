@@ -21,7 +21,7 @@ class Authenticator extends RESTExecutor{
   String refreshLabel;
 
   List<String> dependentDomains;
-
+  bool clearCacheOnLogout;
   HeaderFormatter authHeaderFormatter;
   AuthResponseFormatter authResponseFormatter;
 
@@ -34,7 +34,7 @@ class Authenticator extends RESTExecutor{
     this.refreshLabel = 'refresh',
     String domain = 'auth',
     String label = 'login',
-
+    this.clearCacheOnLogout = false,
     this.authHeaderFormatter,
     this.authResponseFormatter
 
@@ -76,6 +76,10 @@ class Authenticator extends RESTExecutor{
   }
 
   Future<void> logout()async{
+
+    if(clearCacheOnLogout){
+      return RESTExecutor.clearCache();
+    }
     
     for (var domain in dependentDomains) {
       await Persistor(domain).deleteAll();
