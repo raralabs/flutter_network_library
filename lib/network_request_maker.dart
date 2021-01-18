@@ -121,11 +121,9 @@ class NetworkRequestMaker {
      http.Client _client = http.Client();
 
     Uri finalUrl;
-    if (scheme == 'https')
-      finalUrl = Uri.https(host, (path != null) ? path(identifiers) : '', query);
-    else
-      finalUrl = Uri.http(host, (path != null) ? path(identifiers) : '', query);
 
+    finalUrl = Uri(host:host, scheme: scheme, path: (path != null) ? path(identifiers) : '',queryParameters: query);
+  
 
     http.Request request;
 
