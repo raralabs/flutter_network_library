@@ -108,7 +108,7 @@ class NetworkRequestMaker {
    Future<NetworkResponse> execute({
     Map<String,dynamic> data = const {},
 
-    Map<String, String> query = const {},
+    Map<String, dynamic> query = const {},
     List<String> identifiers = const [],
 
     Path path,

@@ -43,7 +43,7 @@ class RESTExecutor{
   String method;
   String domain;
   String label;
-  Map<String,String> params;
+  Map<String,dynamic> params;
   List<String> identifiers;
   Map<String,String> headers;
 
@@ -115,7 +115,7 @@ class RESTExecutor{
     method = 'POST';
   }
 
-  void setParams(Map<String,String> params){
+  void setParams(Map<String,dynamic> params){
         this.params = params??{};
   }
 
