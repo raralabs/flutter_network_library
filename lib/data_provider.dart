@@ -61,6 +61,7 @@ class RESTExecutor{
 
   static Map<String,Domain> domains;
   static Map<String,Set<String>> domainState;
+  
 
   static int cacheForSecondsAll = 60;
   static int retryAfterSecondsAll = 15;
@@ -82,6 +83,23 @@ class RESTExecutor{
     
   }
   
+
+  static RESTExecutor from(RESTExecutor executor){
+    return RESTExecutor(
+      domain: executor.domain,
+      label: executor.label,
+      params: executor.params,
+      headers: executor.headers,
+      identifiers: executor.identifiers,
+      method: executor.method,
+      successCallback: executor.successCallback,
+      errorCallback: executor.errorCallback,
+      cacheForSeconds: executor.cacheForSeconds,
+      retryAfterSeconds: executor.retryAfterSeconds
+      
+    );
+  }
+
   RESTExecutor(
     {
       @required this.domain,
