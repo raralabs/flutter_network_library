@@ -77,15 +77,17 @@ class Authenticator extends RESTExecutor{
 
   Future<void> logout()async{
 
-    if(clearCacheOnLogout){
-      return RESTExecutor.clearCache();
-    }
     
     for (var domain in dependentDomains) {
       await Persistor(domain).deleteAll();
     }
     
     await super.cache.delete(super.getKey());
+
+    
+    if(clearCacheOnLogout){
+      return RESTExecutor.clearCache();
+    }
   }
 
   Map<String,String> getAuthorizationHeader(){

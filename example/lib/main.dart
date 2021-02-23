@@ -19,7 +19,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return RESTListenableBuilder(
+    return RESTWidget(
           executor: RESTExecutor(
               domain: 'appState',
               label: 'theme'
@@ -56,7 +56,6 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    print('rebuilt');
       RESTExecutor _getData = RESTExecutor(
     domain: 'api',
     label: 'list'
