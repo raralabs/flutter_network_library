@@ -77,6 +77,8 @@ class Authenticator extends RESTExecutor{
 
   Future<void> logout()async{
 
+    RESTExecutor.domainState.updateAll((key, value) => {});
+
     
     for (var domain in dependentDomains) {
       await Persistor(domain).deleteAll();
