@@ -58,7 +58,9 @@ class MyHomePage extends StatelessWidget {
 
       RESTExecutor _getData = RESTExecutor(
     domain: 'api',
-    label: 'list'
+    label: 'list',
+    retryAfterSeconds: 5,
+    
   );
     var data = _getData.watch(context);
 

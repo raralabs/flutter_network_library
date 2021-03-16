@@ -203,7 +203,7 @@ class RESTExecutor{
     return '$method$label$identifiers${params.toString()?.hashCode}${headers.toString()?.hashCode}';
   }
 
-  execute({
+   execute({
     Map<String,dynamic> data,
     bool mutation
 
@@ -211,11 +211,11 @@ class RESTExecutor{
     switch(domains[domain].type){
 
       case DomainType.network:
-      await networkExecute(data,mutation);
+      return networkExecute(data,mutation);
       break;
 
       default:
-      await basicExecute(data);
+      return basicExecute(data);
       break;
 
     }
@@ -231,6 +231,8 @@ class RESTExecutor{
     if(successCallback!=null && response.success){
       successCallback(cache.read(getKey()));
     }
+
+    return cache.read(getKey());
   }
 
   networkExecute(Map<String,dynamic> data,bool mutation)async{
@@ -299,6 +301,8 @@ class RESTExecutor{
 
 
     await cache.end(getKey());
+
+    return cache.read(getKey());
     
   }
 
