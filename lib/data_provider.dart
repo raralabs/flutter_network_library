@@ -221,7 +221,7 @@ class RESTExecutor{
     }
   }
 
-  basicExecute(Map<String,dynamic> data)async{
+  Future<Response> basicExecute(Map<String,dynamic> data)async{
 
     if(data == null)
     await cache.end(getKey());
@@ -235,7 +235,7 @@ class RESTExecutor{
     return cache.read(getKey());
   }
 
-  networkExecute(Map<String,dynamic> data,bool mutation)async{
+  Future<Response> networkExecute(Map<String,dynamic> data,bool mutation)async{
     
     cache.start(getKey());
 
