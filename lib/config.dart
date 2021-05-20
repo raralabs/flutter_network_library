@@ -10,7 +10,7 @@ class NetworkConfig{
 
   String host;
   NetworkScheme scheme;
-
+  int port;
   int cacheForSeconds;
   int timeoutSeconds;
   String authDomain;
@@ -25,6 +25,7 @@ class NetworkConfig{
     this.authHeaderFormatter,
     this.authResponseFormatter,
     this.host,
+    this.port,
     this.loginLabel,
     this.registerLabel,
     this.scheme,

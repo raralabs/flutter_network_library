@@ -65,6 +65,7 @@ bool get isNetworkError => statusCode==600;
 class NetworkRequestMaker {
  
   static String host;
+  static int port;
   static String scheme = 'https';
 
   static int timeoutSeconds;
@@ -86,6 +87,7 @@ class NetworkRequestMaker {
 
   static Future<void> initialize(NetworkConfig config) async {
     NetworkRequestMaker.host = config.host;
+    NetworkRequestMaker.port = config.port;
     NetworkRequestMaker.scheme = config.scheme==NetworkScheme.http?'http':'https';
 
     assert(config.timeoutSeconds != null);
@@ -122,7 +124,9 @@ class NetworkRequestMaker {
 
     Uri finalUrl;
 
-    finalUrl = Uri(host:host, scheme: scheme, path: (path != null) ? path(identifiers) : '',queryParameters: query);
+    finalUrl = Uri(host:host,
+    port: port,
+     scheme: scheme, path: (path != null) ? path(identifiers) : '',queryParameters: query);
   
 
     http.Request request;

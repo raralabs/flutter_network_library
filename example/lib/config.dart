@@ -18,7 +18,7 @@ var domains = {
   'api':Domain(
     cacheForSeconds: 5,
     path: {
-      'list':(_)=>'/bbdget'
+      'list':(_)=>'/get'
     }
   )
 };
