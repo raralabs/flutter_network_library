@@ -2,8 +2,9 @@ import 'package:flutter_network_library/config.dart';
 import 'package:flutter_network_library/domain.dart';
 
 var config = NetworkConfig(
-  scheme: NetworkScheme.https,
-  host: 'postman-echo.com'
+  scheme: NetworkScheme.http,
+  host:  '65.1.81.123',
+  port: 8080
 );
 
 var domains = {
@@ -18,7 +19,7 @@ var domains = {
   'api':Domain(
     cacheForSeconds: 5,
     path: {
-      'list':(_)=>'/get'
+      'list':(_)=>'/api'
     }
   )
 };

@@ -64,6 +64,8 @@ class MyHomePage extends StatelessWidget {
   );
     var data = _getData.watch(context);
 
+    print(data.statusCode);
+
     return Scaffold(
       appBar: AppBar(
 

@@ -135,6 +135,7 @@ class NetworkRequestMaker {
       request = http.Request(method, finalUrl);
 
     } catch (e) {
+      print(e);
       return NetworkResponse.netError();
     }
     request.headers['Content-Type'] = 'application/json';
@@ -150,6 +151,7 @@ class NetworkRequestMaker {
       response = await _client.send(request).timeout(Duration(seconds: NetworkRequestMaker.timeoutSeconds));
     } catch (e) {
 
+      print(e);
       return NetworkResponse.netError();
     }
 
