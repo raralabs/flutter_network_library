@@ -124,6 +124,20 @@ class NetworkRequestMaker {
 
     Uri finalUrl;
 
+    if(Uri.tryParse(path?.call(identifiers)).isAbsolute??false){
+
+    var url = Uri.parse(path(identifiers));
+
+    finalUrl = Uri(
+      host: url.host,
+      port: url.port,
+      scheme: url.scheme,
+      path: url.path,
+      queryParameters: query
+    );
+    
+    }
+    else
     finalUrl = Uri(host:host,
     port: port,
      scheme: scheme, path: (path != null) ? path(identifiers) : '',queryParameters: query);

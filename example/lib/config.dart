@@ -2,9 +2,8 @@ import 'package:flutter_network_library/config.dart';
 import 'package:flutter_network_library/domain.dart';
 
 var config = NetworkConfig(
-  scheme: NetworkScheme.http,
-  host:  '65.1.81.123',
-  port: 8080
+  scheme: NetworkScheme.https,
+  host:  'api2.binance.com',
 );
 
 var domains = {
@@ -19,7 +18,7 @@ var domains = {
   'api':Domain(
     cacheForSeconds: 5,
     path: {
-      'list':(_)=>'/api'
+      'list':(_)=>'/market'
     }
   )
 };
