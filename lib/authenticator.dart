@@ -62,7 +62,7 @@ class Authenticator extends RESTExecutor{
       method: 'POST',
       label: refreshLabel,
       headers: {
-        'Authorization': getRefreshToken()
+        'Authorization': 'Bearer ${getRefreshToken()}'
       },
       successCallback: (res){
         super.cache.write(super.getKey(), res);
@@ -76,6 +76,8 @@ class Authenticator extends RESTExecutor{
 
     return response;
     }catch(e){
+      
+    NetworkRequestMaker.refreshing = false;
       return Response(
         statusCode: 404
       );
