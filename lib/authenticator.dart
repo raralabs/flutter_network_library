@@ -70,7 +70,7 @@ class Authenticator extends RESTExecutor{
       errorCallback: (_){
         // logout();
       }
-    ).execute();
+    ).execute(data: {});
 
     NetworkRequestMaker.refreshing = false;
 
