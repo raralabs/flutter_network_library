@@ -56,6 +56,7 @@ class Authenticator extends RESTExecutor{
   }
 
   Future<Response> refresh()async{
+    NetworkRequestMaker.refreshing = true;
     try{
     var response = await RESTExecutor(
       domain: super.domain,
