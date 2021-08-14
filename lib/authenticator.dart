@@ -56,7 +56,7 @@ class Authenticator extends RESTExecutor{
   }
 
   Future<Response> refresh()async{
-
+    try{
     var response = await RESTExecutor(
       domain: super.domain,
       method: 'POST',
@@ -75,6 +75,11 @@ class Authenticator extends RESTExecutor{
     NetworkRequestMaker.refreshing = false;
 
     return response;
+    }catch(e){
+      return Response(
+        statusCode: 404
+      );
+    }
   }
 
   Future<void> logout()async{
