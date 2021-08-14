@@ -55,9 +55,9 @@ class Authenticator extends RESTExecutor{
     );
   }
 
-  refresh()async{
+  Future<Response> refresh()async{
 
-    await RESTExecutor(
+    var response = await RESTExecutor(
       domain: super.domain,
       method: 'POST',
       label: refreshLabel,
@@ -73,6 +73,8 @@ class Authenticator extends RESTExecutor{
     ).execute();
 
     NetworkRequestMaker.refreshing = false;
+
+    return response;
   }
 
   Future<void> logout()async{
