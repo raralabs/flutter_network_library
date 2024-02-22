@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_null_comparison
-
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -132,7 +130,7 @@ class Persistor {
       return (result.timeStamp ?? DateTime.now())
           .isAfter(DateTime.now().subtract(Duration(seconds: retrySeconds)));
 
-    return (result.success ?? false) &&
+    return (result.success) &&
         (result.timeStamp ?? DateTime.now())
             .isAfter(DateTime.now().subtract(Duration(seconds: cacheSeconds)));
   }
@@ -164,12 +162,15 @@ class Persistor {
   }
 
   Future<void> complete(String key,
-      {bool? success, dynamic data, String? rawData, int? statusCode}) async {
+      {bool? success,
+      Map<String, dynamic>? data,
+      String? rawData,
+      int? statusCode}) async {
     Response result = box!.get(key, defaultValue: Response());
     result.success = success ?? false;
 
     if (success ?? false) {
-      result.data = data;
+      result.data = data ?? {};
       result.error = {};
     } else
       result.error = (data as Map).cast<String, dynamic>();

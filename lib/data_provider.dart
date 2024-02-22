@@ -142,7 +142,7 @@ class RESTExecutor {
 
     if (domains[domain]!.type == DomainType.network &&
         method == 'GET' &&
-        !cache.read(getKey()).fetching! &&
+        !cache.read(getKey()).fetching &&
         ((!domainState[domain]!.contains(getKey())) ||
             (!cache.getFreshStatus(
                 getKey(),
@@ -179,7 +179,7 @@ class RESTExecutor {
     else
       await cache.complete(getKey(), data: data, success: true);
 
-    if (successCallback != null && response.success!) {
+    if (successCallback != null && response.success) {
       successCallback!(cache.read(getKey()));
     }
 
