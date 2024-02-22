@@ -8,11 +8,11 @@ enum DomainType{
 
 class Domain{
 
-  int cacheForSeconds;
-  int retryAfterSeconds;
+  int? cacheForSeconds;
+  int? retryAfterSeconds;
   DomainType type;
 
-  Map<String,Path> path;
+  Map<String,Path>? path;
 
   Domain({
     this.path,

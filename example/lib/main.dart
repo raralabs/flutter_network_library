@@ -49,9 +49,9 @@ class _MyAppState extends State<MyApp> {
 
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key? key, this.title}) : super(key: key);
 
-  final String title;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
 
-        title: Text(title),
+        title: Text(title!),
       ),
       body: Center(
         child: Column(
@@ -89,7 +89,7 @@ class MyHomePage extends StatelessWidget {
                 _changeTheme.response.data.toString(),
               ),
             SizedBox(height: 20,),
-            RaisedButton(
+            ElevatedButton(
               onPressed: (){
                 _changeTheme.execute(
                   data: {
@@ -117,7 +117,7 @@ class MyHomePage extends StatelessWidget {
                 ),
              
             SizedBox(height: 20,),
-            RaisedButton(
+            ElevatedButton(
               onPressed: (){
                 _getData.execute(
                   
