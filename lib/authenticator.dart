@@ -1,13 +1,13 @@
 import 'package:flutter_network_library/data_provider.dart';
 import 'package:flutter_network_library/flutter_network_library.dart';
 
-typedef Map<String,String> HeaderFormatter(String accessToken);
-typedef AuthTokenObject AuthResponseFormatter(Map<String,dynamic> data);
+typedef Map<String,String> HeaderFormatter(String? accessToken);
+typedef AuthTokenObject AuthResponseFormatter(Map<String,dynamic>? data);
 
 class AuthTokenObject{
 
-  String accessToken;
-  String refreshToken;
+  String? accessToken;
+  String? refreshToken;
 
   AuthTokenObject({
     this.accessToken,
@@ -18,22 +18,22 @@ class AuthTokenObject{
 
 class Authenticator extends RESTExecutor{
 
-  String refreshLabel;
+  String? refreshLabel;
 
   List<String> dependentDomains;
   bool clearCacheOnLogout;
-  HeaderFormatter authHeaderFormatter;
-  AuthResponseFormatter authResponseFormatter;
+  HeaderFormatter? authHeaderFormatter;
+  AuthResponseFormatter? authResponseFormatter;
 
   Authenticator({
-    ResponseCallback successCallback,
-    ResponseCallback errorCallback,
+    ResponseCallback? successCallback,
+    ResponseCallback? errorCallback,
 
     this.dependentDomains = const [],
     
     this.refreshLabel = 'refresh',
     String domain = 'auth',
-    String label = 'login',
+    String? label = 'login',
     this.clearCacheOnLogout = false,
     this.authHeaderFormatter,
     this.authResponseFormatter
@@ -108,7 +108,7 @@ class Authenticator extends RESTExecutor{
     return {};
 
     if(authHeaderFormatter!=null)
-    return authHeaderFormatter(getAccessToken());
+    return authHeaderFormatter!(getAccessToken());
 
     return {
       'Authorization': 'Bearer ${getAccessToken()}'
@@ -116,7 +116,7 @@ class Authenticator extends RESTExecutor{
 
   }
 
-  String getAccessToken(){
+  String? getAccessToken(){
 
     Response result = super.cache.read(super.getKey());
 
@@ -127,13 +127,13 @@ class Authenticator extends RESTExecutor{
     return null;
 
     if(authResponseFormatter!=null)
-    return authResponseFormatter(result.data).accessToken;
+    return authResponseFormatter!(result.data).accessToken;
 
     return result.parseDetail()['access_token'];
       
   }
 
-  String getRefreshToken(){
+  String? getRefreshToken(){
 
     Response result = super.cache.read(super.getKey());
 
@@ -145,7 +145,7 @@ class Authenticator extends RESTExecutor{
 
     
     if(authResponseFormatter!=null)
-    return authResponseFormatter(result.data).refreshToken;
+    return authResponseFormatter!(result.data).refreshToken;
 
     return result.parseDetail()['refresh_token'];
       

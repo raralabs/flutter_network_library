@@ -8,17 +8,17 @@ enum NetworkScheme{
 
 class NetworkConfig{
 
-  String host;
-  NetworkScheme scheme;
-  int port;
+  String? host;
+  NetworkScheme? scheme;
+  int? port;
   int cacheForSeconds;
   int timeoutSeconds;
-  String authDomain;
-  String loginLabel;
-  String registerLabel;
+  String? authDomain;
+  String? loginLabel;
+  String? registerLabel;
   bool clearCacheOnLogout;
-  HeaderFormatter authHeaderFormatter;
-  AuthResponseFormatter authResponseFormatter;
+  HeaderFormatter? authHeaderFormatter;
+  AuthResponseFormatter? authResponseFormatter;
 
   NetworkConfig({
     this.authDomain,
