@@ -1,4 +1,3 @@
-import 'package:flutter_network_library/data_provider.dart';
 import 'package:flutter_network_library/flutter_network_library.dart';
 
 typedef Map<String,String> HeaderFormatter(String? accessToken);
@@ -120,9 +119,6 @@ class Authenticator extends RESTExecutor{
 
     Response result = super.cache.read(super.getKey());
 
-    if(result == null)
-    return null;
-
     if(result.success == false)
     return null;
 
@@ -136,9 +132,6 @@ class Authenticator extends RESTExecutor{
   String? getRefreshToken(){
 
     Response result = super.cache.read(super.getKey());
-
-    if(result == null)
-    return null;
 
     if(result.success == false)
     return null;
