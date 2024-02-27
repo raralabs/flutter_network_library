@@ -36,6 +36,7 @@ class RESTExecutor {
   Map<String, dynamic>? params;
   List<String> identifiers;
   Map<String, String>? headers;
+  static Map<String, String>? extraHeaders;
 
   int? cacheForSeconds;
   int? retryAfterSeconds;
@@ -101,6 +102,10 @@ class RESTExecutor {
   }
 
   static Future<void> clearCache() => Persistor.clear();
+
+  static void setExtraHeaders(Map<String, String> val) {
+    extraHeaders = {...?extraHeaders, ...val};
+  }
 
   void delete() {
     method = 'DELETE';
@@ -191,12 +196,13 @@ class RESTExecutor {
     cache.start(getKey());
 
     NetworkResponse response = await requestMaker.execute(
-        path: domains[domain]!.path![label!],
-        query: params,
-        identifiers: identifiers,
-        data: data,
-        method: method,
-        headers: headers);
+      path: domains[domain]!.path![label!],
+      query: params,
+      identifiers: identifiers,
+      data: data,
+      method: method,
+      headers: {...?headers, ...?extraHeaders},
+    );
 
     if (response.statusCode! >= 400) {}
 
