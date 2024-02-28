@@ -124,9 +124,7 @@ class Persistor {
   bool getFreshStatus(String key, int cacheSeconds, int retrySeconds) {
     Response result = read(key);
 
-    if (result == null || cacheSeconds == null) return false;
-
-    if (result.success == false && retrySeconds != null)
+    if (result.success == false)
       return (result.timeStamp ?? DateTime.now())
           .isAfter(DateTime.now().subtract(Duration(seconds: retrySeconds)));
 
@@ -191,7 +189,7 @@ class Persistor {
   Response read(String key) {
     Response result = box!.get(key, defaultValue: Response());
 
-    if (result.data != null && !(result.data is List))
+    if (!(result.data is List))
       result.data = (result.data).cast<String, dynamic>();
 
     return result;

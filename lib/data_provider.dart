@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_network_library/constants.dart';
 import 'package:flutter_network_library/flutter_network_library.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -55,6 +56,7 @@ class RESTExecutor {
   static int retryAfterSecondsAll = 15;
 
   static initialize(NetworkConfig config, Map<String, Domain> domains) async {
+    domains[Constants.tokenBoxName] = Domain();
     RESTExecutor.domains = domains;
 
     RESTExecutor.cacheForSecondsAll = config.cacheForSeconds;
@@ -132,6 +134,24 @@ class RESTExecutor {
       (context as Element).markNeedsBuild();
     });
     return response;
+  }
+
+  static savePrimaryAuthenticationCredentials({
+    required Map<String, dynamic> data,
+  }) {
+    Persistor(Constants.tokenBoxName).write(
+      Constants.primaryToken,
+      Response(success: true, data: data, statusCode: 200),
+    );
+  }
+
+  static saveSecondaryAuthenticationCredentials({
+    required Map<String, dynamic> data,
+  }) {
+    Persistor(Constants.tokenBoxName).write(
+      Constants.secondaryToken,
+      Response(success: true, data: data, statusCode: 200),
+    );
   }
 
   static refetchDomain(String domain) {
@@ -234,8 +254,7 @@ class RESTExecutor {
     }
 
     if (method == 'GET' &&
-        false // response.isAuthError
-        &&
+        response.isAuthError &&
         (domainState[domain]!.contains(getKey()))) {
       domainState[domain]!.remove(getKey());
     }

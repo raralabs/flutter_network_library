@@ -117,9 +117,8 @@ class NetworkRequestMaker {
       print(e);
       return NetworkResponse.netError();
     }
+    
     request.headers['Content-Type'] = 'application/json';
-
-    request.headers.addAll(authenticator?.getAuthorizationHeader() ?? {});
 
     if (data != null && method != 'GET') request.body = json.encode(data);
 

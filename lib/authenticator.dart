@@ -1,22 +1,17 @@
+import 'package:flutter_network_library/constants.dart';
 import 'package:flutter_network_library/flutter_network_library.dart';
 
-typedef Map<String,String> HeaderFormatter(String? accessToken);
-typedef AuthTokenObject AuthResponseFormatter(Map<String,dynamic>? data);
+typedef Map<String, String> HeaderFormatter(String? accessToken);
+typedef AuthTokenObject AuthResponseFormatter(Map<String, dynamic>? data);
 
-class AuthTokenObject{
-
+class AuthTokenObject {
   String? accessToken;
   String? refreshToken;
 
-  AuthTokenObject({
-    this.accessToken,
-    this.refreshToken
-  });
-
+  AuthTokenObject({this.accessToken, this.refreshToken});
 }
 
-class Authenticator extends RESTExecutor{
-
+class Authenticator extends RESTExecutor {
   String? refreshLabel;
 
   List<String> dependentDomains;
@@ -27,126 +22,130 @@ class Authenticator extends RESTExecutor{
   Authenticator({
     ResponseCallback? successCallback,
     ResponseCallback? errorCallback,
-
     this.dependentDomains = const [],
-    
     this.refreshLabel = 'refresh',
     String domain = 'auth',
     String? label = 'login',
     this.clearCacheOnLogout = false,
     this.authHeaderFormatter,
-    this.authResponseFormatter
+    this.authResponseFormatter,
+  }) : super(
+            domain: domain,
+            label: label,
+            method: 'POST',
+            successCallback: successCallback,
+            errorCallback: errorCallback);
 
-  })
-  :
-  super(
-    domain: domain,
-    label: label,
-    method:'POST',
-    successCallback: successCallback,
-    errorCallback: errorCallback
-
-  );
-
-  login(Map<String,dynamic> data){
-    super.execute(
-      data: data
-    );
+  login(Map<String, dynamic> data) {
+    super.execute(data: data);
   }
 
-  Future<Response> refresh()async{
+  Future<Response> refresh() async {
     NetworkRequestMaker.refreshing = true;
-    try{
-    var response = await RESTExecutor(
-      domain: super.domain,
-      method: 'POST',
-      label: refreshLabel,
-      headers: {
-        'Authorization': 'Bearer ${getRefreshToken()}'
-      },
-      successCallback: (res){
-        super.cache.write(super.getKey(), res);
-      },
-      errorCallback: (_){
-        // logout();
-      }
-    ).execute(data: {});
+    try {
+      var response = await RESTExecutor(
+              domain: super.domain,
+              method: 'POST',
+              label: refreshLabel,
+              headers: {'Authorization': 'Bearer ${getPrimaryRefreshToken()}'},
+              successCallback: (res) {
+                super.cache.write(super.getKey(), res);
+              },
+              errorCallback: (_) {
+                // logout();
+              })
+          .execute(data: {});
 
-    NetworkRequestMaker.refreshing = false;
+      NetworkRequestMaker.refreshing = false;
 
-    return response;
-    }catch(e){
-      
-    NetworkRequestMaker.refreshing = false;
-      return Response(
-        statusCode: 404
-      );
+      return response;
+    } catch (e) {
+      NetworkRequestMaker.refreshing = false;
+      return Response(statusCode: 404);
     }
   }
 
-  Future<void> logout()async{
-
+  Future<void> logout() async {
     RESTExecutor.domainState.updateAll((key, value) => {});
 
-    
     for (var domain in dependentDomains) {
       await Persistor(domain).deleteAll();
     }
-    
+
     await super.cache.delete(super.getKey());
 
-    
-    if(clearCacheOnLogout){
+    if (clearCacheOnLogout) {
       return RESTExecutor.clearCache();
     }
   }
 
-  Map<String,String> getAuthorizationHeader(){
+  Map<String, String> getPrimaryAuthorizationHeader() {
+    if (!isLoggedIn()) return {};
 
-    if(!isLoggedIn())
-    return {};
+    if (authHeaderFormatter != null)
+      return authHeaderFormatter!(getPrimaryAccessToken());
 
-    if(authHeaderFormatter!=null)
-    return authHeaderFormatter!(getAccessToken());
-
-    return {
-      'Authorization': 'Bearer ${getAccessToken()}'
-    };
-
+    return {'Authorization': 'Bearer ${getPrimaryAccessToken()}'};
   }
 
-  String? getAccessToken(){
+  Map<String, String> getSecondaryAuthorizationHeader() {
+    if (!isLoggedIn()) return {};
 
-    Response result = super.cache.read(super.getKey());
+    if (authHeaderFormatter != null)
+      return authHeaderFormatter!(getSecondaryAccessToken());
 
-    if(result.success == false)
-    return null;
-
-    if(authResponseFormatter!=null)
-    return authResponseFormatter!(result.data).accessToken;
-
-    return result.parseDetail()['access_token'];
-      
+    return {'Authorization': 'Bearer ${getSecondaryAccessToken()}'};
   }
 
-  String? getRefreshToken(){
+  String? getPrimaryAccessToken() {
+    Response result =
+        Persistor(Constants.tokenBoxName).read(Constants.primaryToken);
 
-    Response result = super.cache.read(super.getKey());
+    if (result.success == false) return null;
 
-    if(result.success == false)
-    return null;
+    if (authResponseFormatter != null)
+      return authResponseFormatter!(result.data).accessToken;
 
-    
-    if(authResponseFormatter!=null)
-    return authResponseFormatter!(result.data).refreshToken;
-
-    return result.parseDetail()['refresh_token'];
-      
+    return result.data['access_token'];
   }
 
-  bool isLoggedIn(){
+  String? getPrimaryRefreshToken() {
+    Response result =
+        Persistor(Constants.tokenBoxName).read(Constants.primaryToken);
 
-    return (getAccessToken()!=null);
+    if (result.success == false) return null;
 
+    if (authResponseFormatter != null)
+      return authResponseFormatter!(result.data).refreshToken;
+
+    return result.data['refresh_token'];
+  }
+
+  String? getSecondaryAccessToken() {
+    Response result =
+        Persistor(Constants.tokenBoxName).read(Constants.secondaryToken);
+
+    if (result.success == false) return null;
+
+    if (authResponseFormatter != null)
+      return authResponseFormatter!(result.data).accessToken;
+
+    return result.data['access_token'];
+  }
+
+  String? getSecondaryRefreshToken() {
+    Response result =
+        Persistor(Constants.tokenBoxName).read(Constants.secondaryToken);
+
+    if (result.success == false) return null;
+
+    if (authResponseFormatter != null)
+      return authResponseFormatter!(result.data).refreshToken;
+
+    return result.data['refresh_token'];
+  }
+
+  bool isLoggedIn() {
+    return (getPrimaryAccessToken() != null);
   }
 }
